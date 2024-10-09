@@ -47,7 +47,7 @@ const createUser = async (req, res) => {
       },
     });
 
-    res.status(200).json({
+    res.status(200).send({
       success: true,
       message: 'User create successfully!',
       data: user,
@@ -55,7 +55,7 @@ const createUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
   } catch (error) {
-    res.status(500).json({
+    res.status(500).send({
       success: false,
       message: 'Internal server error!',
     });
@@ -77,13 +77,13 @@ const findUserById = async (req, res) => {
       },
     });
 
-    res.status(200).json({
+    res.status(200).send({
       success: true,
       message: `Get user by ${id}`,
       data: user,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(500).send({
       success: false,
       message: 'Internal server errror',
     });
@@ -123,11 +123,31 @@ const updateUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(500).send({
       success: false,
       message: 'Internal server error',
     });
   }
 };
 
-module.exports = { findUsers, createUser, findUserById, updateUser };
+const deleteUser = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await prisma.user.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.status(200).send({
+      success: true,
+      message: 'Data deleted successfully',
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+module.exports = { findUsers, createUser, findUserById, updateUser, deleteUser };
